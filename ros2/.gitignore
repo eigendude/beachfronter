@@ -1,0 +1,11 @@
+# ROS 2 build system directoryes
+/stamps
+
+# CMake build directories
+/cmake
+/downloads
+/extracted
+/work
+
+# ROS 2 build directories
+/ros2
