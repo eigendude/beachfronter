@@ -1,0 +1,91 @@
+################################################################################
+#
+#  Copyright (C) 2020 Garrett Brown
+#  This file is part of the beachfronter repo - https://github.com/eigendude/beachfronter
+#
+#  SPDX-License-Identifier: Apache-2.0
+#  See the file LICENSE.txt for more information.
+#
+################################################################################
+
+#
+# This workflow will do a clean install of node dependencies, build the source
+# code and run tests across different versions of node.
+#
+# For more information see:
+#
+#   https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
+#
+
+name: Node.js CI
+
+# Controls when the action will run. Triggers the workflow on push or pull
+# request events but only for the master branch
+#on:
+#  push:
+#    branches: [master, test]
+#  pull_request:
+#    branches: [master, test]
+on: [push, pull_request]
+
+# A workflow run is made up of one or more jobs that can run sequentially or in
+# parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-18.04
+            node-version: 12
+          - os: ubuntu-20.04
+            node-version: 14
+
+    # Steps represent a sequence of tasks that will be executed as part of the
+    # job
+    steps:
+      - name: Build environment information
+        run: 'echo "Matrix OS: ${{ matrix.os }} on $HOSTNAME with $(getconf _NPROCESSORS_ONLN) cores"'
+
+        # Check-out the repository under $GITHUB_WORKSPACE, so the job can
+        # access it
+      - name: Checkout main repo
+        uses: actions/checkout@v2
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Restore node modules
+        id: restore-node
+        uses: actions/cache@v2
+        with:
+          path: |
+            webhud/browser/node_modules
+          key: npm-install-${{ matrix.node-version }}-${{ matrix.os }}-${{ hashFiles('webhud/browser/package.json', 'webhud/browser/package-lock.json') }}
+
+      - name: npm install
+        if: steps.restore-node.outputs.cache-hit != 'true'
+        run: npm install
+        working-directory: webhud/browser
+
+      - name: npm run audit
+        run: npm run audit
+        working-directory: webhud/browser
+
+      - name: npm run lint
+        run: npm run lint
+        working-directory: webhud/browser
+
+      - name: npm test
+        run: npm test
+        working-directory: webhud/browser
+
+      - name: npm run build
+        run: npm run build
+        working-directory: webhud/browser
