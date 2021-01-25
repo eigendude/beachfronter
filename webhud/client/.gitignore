@@ -1,0 +1,7 @@
+# Compiled binary
+/webrtc-sendrecv
+
+# Eclipse project files
+/.cproject
+/.project
+/.settings/
