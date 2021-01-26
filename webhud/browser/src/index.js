@@ -275,7 +275,7 @@ function websocketServerConnect() {
     );
   }
 
-  var ws_url = "wss://" + ws_server + ":" + ws_port;
+  var ws_url = "ws://" + ws_server + ":" + ws_port;
   setStatus("Connecting to server " + ws_url);
   ws_conn = new WebSocket(ws_url);
 

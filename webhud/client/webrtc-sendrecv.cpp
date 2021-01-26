@@ -56,7 +56,7 @@ static SoupWebsocketConnection *ws_conn = NULL;
 static enum AppState app_state = APP_STATE_UNKNOWN;
 static char *peer_id = NULL;
 static char *our_id = NULL;
-static const char *server_url = "wss://webrtc.nirbheek.in:8443";
+static const char *server_url = "ws://localhost:8443";
 static bool disable_ssl = false;
 static bool remote_is_offerer = false;
 
@@ -770,7 +770,7 @@ connect_to_websocket_server_async (void)
   SoupLogger *logger;
   SoupMessage *message;
   SoupSession *session;
-  const char *https_aliases[] = { "wss", NULL };
+  const char *https_aliases[] = { "ws", NULL };
 
   session =
       soup_session_new_with_options (SOUP_SESSION_SSL_STRICT, !disable_ssl,

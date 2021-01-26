@@ -29,7 +29,7 @@ import websockets
 
 
 parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-parser.add_argument("--url", default="wss://localhost:8443", help="URL to connect to")
+parser.add_argument("--url", default="ws://localhost:8443", help="URL to connect to")
 parser.add_argument("--call", default=None, help="uid of peer to call")
 
 options = parser.parse_args(sys.argv[1:])
