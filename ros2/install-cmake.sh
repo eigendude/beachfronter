@@ -31,8 +31,8 @@ set -o nounset
 #   * ccache
 #
 
-# Version (TODO: 3.18.3)
-CMAKE_VERSION="3.19.2"
+# Version
+CMAKE_VERSION="3.20.2"
 
 # URL
 CMAKE_URL="https://github.com/Kitware/CMake/releases/download/v${CMAKE_VERSION}/cmake-${CMAKE_VERSION}.tar.gz"
