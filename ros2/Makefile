@@ -161,8 +161,9 @@ $(S)/download-depends: $(S)/download-base $(S)/install-pip
 $(S)/patch-depends: $(S)/download-depends
 	echo "Patching ROS 2 dependencies..."
 
-	cd "$(ROS2_DIR)/src/ros-perception/gscam2" && \
-	  git am --3way < "$(TOP_DIR)/patches/0001-Fix-compiler-error-due-to-missing-include-directory.patch"
+	cd "$(ROS2_DIR)/src/ros-perception/opencv_cam" && \
+	  git am --3way < "$(TOP_DIR)/patches/0001-package.xml-Add-missing-rclcpp_components-dependency.patch" && \
+	  git am --3way < "$(TOP_DIR)/patches/0002-Fix-compiler-error-due-to-missing-include-directory.patch"
 
 	touch "$@"
 

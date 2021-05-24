@@ -1,16 +1,16 @@
 repositories:
-  ros-perception/gscam2:
-    type: git
-    url: https://github.com/clydemcqueen/gscam2.git
-    version: main
   ros-perception/image_common:
     type: git
     url: https://github.com/ros-perception/image_common.git
     version: ros2
-  ros-perception/vision_opencv:
+  ros-perception/opencv_cam:
     type: git
-    url: https://github.com/ros-perception/vision_opencv.git
-    version: ros2
+    url: https://github.com/clydemcqueen/opencv_cam.git
+    version: master
+#  ros-perception/vision_opencv:
+#    type: git
+#    url: https://github.com/ros-perception/vision_opencv.git
+#    version: ros2
   ros2/ros2_shared:
     type: git
     url: https://github.com/ptrmu/ros2_shared.git

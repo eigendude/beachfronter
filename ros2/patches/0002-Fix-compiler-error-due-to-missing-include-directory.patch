@@ -1,0 +1,30 @@
+From 88e6a794964f2cb8ed4130759b2fad009e80475b Mon Sep 17 00:00:00 2001
+From: Garrett Brown <garrett.brown@aclima.io>
+Date: Mon, 24 May 2021 17:41:09 -0700
+Subject: [PATCH 2/2] Fix compiler error due to missing include directory
+
+Error was:
+
+  opencv_cam_node.cpp:188:10: fatal error: rclcpp_components/register_node_macro.hpp: No such file or directory
+
+    188 | #include "rclcpp_components/register_node_macro.hpp"
+        |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+---
+ CMakeLists.txt | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index f7be9cd..974c415 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -38,6 +38,7 @@ find_package(sensor_msgs REQUIRED)
+ include_directories(
+   include
+   ${ros2_shared_INCLUDE_DIRS}
++  ${rclcpp_components_INCLUDE_DIRS}
+ )
+ 
+ # Create ament index resource which references the libraries in the binary dir
+-- 
+2.17.1
+
