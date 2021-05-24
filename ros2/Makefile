@@ -16,7 +16,7 @@
 #
 # First, install required dependencies:
 #
-#   sudo apt install curl gnupg2 lsb-release make
+#   sudo apt install curl git gnupg2 lsb-release make
 #
 # Add the ROS 2 apt repository:
 #
@@ -83,6 +83,10 @@ $(S)/install-prereqs: $(S)/base
 	# Add the ROS 2 apt repository
 	curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | sudo apt-key add -
 
+	# Add the ROS 2 repository to our sources list
+	# NOTE: hersute packages not currently available
+	sudo sh -c 'echo "deb [arch=$(shell dpkg --print-architecture)] http://packages.ros.org/ros2/ubuntu $(shell lsb_release -cs) main" > /etc/apt/sources.list.d/ros2-latest.list'
+
 	sudo apt update
 
 	# Install development tools and ROS tools
@@ -112,22 +116,52 @@ $(S)/install-dds: $(S)/install-prereqs
 	touch "$@"
 
 #
-# Download the ROS 2 source code
+# Install rosdep
 #
-$(S)/download-ros2: $(S)/install-pip
-	echo "Downloading ROS 2 source code..."
-	mkdir -p "$(ROS2_DIR)/src"
-	cd "$(ROS2_DIR)" && \
-	  wget --timestamping "https://raw.githubusercontent.com/ros2/ros2/foxy/ros2.repos" && \
-	  vcs import "$(ROS2_DIR)/src" < ros2.repos
+$(S)/install-rosdep: $(S)/install-prereqs
+	[ -f "/etc/ros/rosdep/sources.list.d/20-default.list" ] || sudo rosdep init
+
+	rosdep update
+
 	touch "$@"
 
 #
-# Install ROS 2 dependencies
+# Base target for source code downloads
 #
-$(S)/install-rosdep: $(S)/download-ros2 $(S)/install-dds
-	[ -f "/etc/ros/rosdep/sources.list.d/20-default.list" ] || sudo rosdep init
-	rosdep update
+$(S)/download-base: $(S)/base
+	mkdir -p "$(ROS2_DIR)/src"
+
+	touch "$@"
+
+#
+# Download the ROS 2 source code
+#
+$(S)/download-ros2: $(S)/download-base $(S)/install-pip
+	echo "Downloading ROS 2 source code..."
+
+	cd "$(ROS2_DIR)" && \
+	  wget --timestamping "https://raw.githubusercontent.com/ros2/ros2/foxy/ros2.repos" && \
+	  vcs import "$(ROS2_DIR)/src" < ros2.repos
+
+	touch "$@"
+
+#
+# Download local dependencies
+#
+$(S)/download-depends: $(S)/download-base $(S)/install-pip
+	echo "Downloading local dependencies..."
+
+	vcs import "$(ROS2_DIR)/src" < "$(TOP_DIR)/depends.repos"
+
+	touch "$@"
+
+#
+# Install ROS 2 and local dependencies
+#
+$(S)/install-depends: \
+  $(S)/download-ros2 \
+  $(S)/download-depends \
+  $(S)/install-rosdep
 	cd "$(ROS2_DIR)" && \
 	  rosdep install --from-paths src --ignore-src --rosdistro foxy -y --skip-keys "console_bridge fastcdr fastrtps rti-connext-dds-5.3.1 urdfdom_headers"
 
@@ -146,7 +180,7 @@ $(S)/build-cmake: $(S)/base
 #
 # Build ROS 2 with colcon
 #
-$(S)/build-ros2: $(S)/build-cmake $(S)/install-rosdep
+$(S)/build-ros2: $(S)/build-cmake $(S)/install-depends
 	echo "Building ROS 2..."
 
 	+cd "$(ROS2_DIR)" && \
