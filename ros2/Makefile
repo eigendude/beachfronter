@@ -156,11 +156,23 @@ $(S)/download-depends: $(S)/download-base $(S)/install-pip
 	touch "$@"
 
 #
+# Patch local dependencies
+#
+$(S)/patch-depends: $(S)/download-depends
+	echo "Patching ROS 2 dependencies..."
+
+	cd "$(ROS2_DIR)/src/ros-perception/gscam2" && \
+	  git am --3way < "$(TOP_DIR)/patches/0001-Fix-compiler-error-due-to-missing-include-directory.patch"
+
+	touch "$@"
+
+#
 # Install ROS 2 and local dependencies
 #
 $(S)/install-depends: \
   $(S)/download-ros2 \
   $(S)/download-depends \
+  $(S)/patch-depends \
   $(S)/install-rosdep
 	cd "$(ROS2_DIR)" && \
 	  rosdep install --from-paths src --ignore-src --rosdistro foxy -y --skip-keys "console_bridge fastcdr fastrtps rti-connext-dds-5.3.1 urdfdom_headers"

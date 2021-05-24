@@ -1,0 +1,30 @@
+From 18f95b772108d15c475e4a87bed7c85651092b0b Mon Sep 17 00:00:00 2001
+From: Garrett Brown <garrett.brown@aclima.io>
+Date: Sun, 23 May 2021 22:53:04 -0700
+Subject: [PATCH] Fix compiler error due to missing include directory
+
+Error was:
+
+  fatal error: rclcpp_components/register_node_macro.hpp: No such file or directory
+     37 | #include "rclcpp_components/register_node_macro.hpp"
+        |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+---
+ CMakeLists.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index c4b5396..2df32e2 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -37,7 +37,7 @@ find_package(rclpy REQUIRED)
+ find_package(ros2_shared REQUIRED)
+ find_package(sensor_msgs REQUIRED)
+ 
+-include_directories(include)
++include_directories(include ${rclcpp_components_INCLUDE_DIRS})
+ 
+ # Create ament index resource which references the libraries in the binary dir
+ set(node_plugins "")
+-- 
+2.17.1
+
