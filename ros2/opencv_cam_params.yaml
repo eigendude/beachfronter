@@ -1,6 +1,7 @@
 /opencv_cam:
   ros__parameters:
-    file: True
-    filename: 'netbook_camera.mov'
-    camera_info_path: 'netbook_camera_info.ini'
-    camera_frame_id: 'netbook_camera'
+    camera_info_path: 'rpi_camera_info.ini'
+    camera_frame_id: 'rpi_camera'
+    index: 14
+    width: 1280
+    height: 1280
