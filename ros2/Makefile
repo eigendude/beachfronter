@@ -12,11 +12,14 @@
 #
 # ROS 2 build chain
 #
+# If ROS 2 is installed to the system, source the setup script before calling
+# make. This is not needed if the ROS 2 desktop components are also being built.
+#
 # Before running this script, prepare your system via the following steps.
 #
 # First, install required dependencies:
 #
-#   sudo apt install curl git gnupg2 lsb-release make
+#   sudo apt install curl git gnupg2 lsb-release make python3-pip wget
 #
 # Add the ROS 2 apt repository:
 #
@@ -52,6 +55,35 @@ include setup_paths.mk
 # Set the stage used when make is called with no arguments
 all: $(S)/build-ros2
 
+# Get current distro
+DISTRO := $(shell lsb_release -cs)
+
+# Decide if ROS 2 needs to be compiled or installed via apt
+ifeq ($(DISTRO),bionic)
+  # Ubuntu 18.04
+  BUILD_ROS2_DESKTOP := 1
+else ifeq ($(DISTRO),focal)
+  # Ubuntu 20.04
+  BUILD_ROS2_DESKTOP := 0
+else ifeq ($(DISTRO),hirsute)
+  # Ubuntu 21.04
+  BUILD_ROS2_DESKTOP := 1
+else
+  BUILD_ROS2_DESKTOP := 1
+endif
+
+CMAKE_VERSION := $(shell cmake --version | head -n 1 | awk '{print $$3}')
+CMAKE_VERSION_MAJOR := $(shell echo $(CMAKE_VERSION) | cut -f1 -d.)
+CMAKE_VERSION_MINOR := $(shell echo $(CMAKE_VERSION) | cut -f2 -d.)
+
+# Decide if we should build cmake
+CMAKE_MIN_REQUIRED := 16
+ifeq ($(shell [ $(CMAKE_VERSION_MINOR) -lt $(CMAKE_MIN_REQUIRED) ] && echo 1),1)
+  BUILD_CMAKE := 1
+else
+  BUILD_CMAKE := 0
+endif
+
 ################################################################################
 #
 # Build system targets
@@ -78,7 +110,7 @@ $(S)/base:
 #
 $(S)/install-prereqs: $(S)/base
 	# Install required dependencies
-	sudo apt install -y curl gnupg2 lsb-release make
+	sudo apt install -y curl gnupg2 lsb-release make python3-pip
 
 	# Add the ROS 2 apt repository
 	curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | sudo apt-key add -
@@ -167,14 +199,19 @@ $(S)/patch-depends: $(S)/download-depends
 
 	touch "$@"
 
-#
-# Install ROS 2 and local dependencies
-#
-$(S)/install-depends: \
-  $(S)/download-ros2 \
+
+ROSDEP_INSTALL_DEPS := \
   $(S)/download-depends \
   $(S)/patch-depends \
   $(S)/install-rosdep
+ifeq ($(BUILD_ROS2_DESKTOP),1)
+  ROSDEP_INSTALL_DEPS += $(S)/download-ros2
+endif
+
+#
+# Install ROS 2 and local dependencies
+#
+$(S)/install-depends: $(ROSDEP_INSTALL_DEPS)
 	cd "$(ROS2_DIR)" && \
 	  rosdep install --from-paths src --ignore-src --rosdistro foxy -y --skip-keys "console_bridge fastcdr fastrtps rti-connext-dds-5.3.1 urdfdom_headers"
 
@@ -190,13 +227,20 @@ $(S)/build-cmake: $(S)/base
 
 	touch "$@"
 
+ROS2_BUILD_DEPS := $(S)/install-depends
+ifeq ($(BUILD_CMAKE),1)
+  ROS2_BUILD_DEPS += $(S)/build-cmake
+endif
+
 #
 # Build ROS 2 with colcon
 #
-$(S)/build-ros2: $(S)/build-cmake $(S)/install-depends
+$(S)/build-ros2: $(ROS2_BUILD_DEPS)
 	echo "Building ROS 2..."
 
 	+cd "$(ROS2_DIR)" && \
-	  PATH="$(CMAKE_DIR)/bin:$${PATH}" colcon build --symlink-install
+	  PATH="$(CMAKE_DIR)/bin:$${PATH}" \
+	  `#MAKEFLAGS="-j1 -l1"` \
+	  colcon build --symlink-install `#--executor sequential`
 
 	touch "$@"
