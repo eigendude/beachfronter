@@ -1,0 +1,13 @@
+/v4l2_camera:
+  ros__parameters:
+    blue_balance: 1000
+    camera_frame_id: camera
+    digital_gain: 1000
+    image_size:
+    - 1280
+    - 1280
+    output_encoding: rgb8
+    pixel_format: YUYV
+    red_balance: 1000
+    use_sim_time: false
+    video_device: /dev/video14
