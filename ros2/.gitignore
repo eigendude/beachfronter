@@ -8,4 +8,5 @@
 /work
 
 # ROS 2 build directories
-/ros2
+/ros2-desktop
+/ros2-ws

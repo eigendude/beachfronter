@@ -27,4 +27,7 @@ S = $(STAMP_DIR)
 CMAKE_DIR = $(TOP_DIR)/cmake
 
 # Directory of ROS 2 source code
-ROS2_DIR = $(TOP_DIR)/ros2
+ROS2_DESKTOP_DIR = $(TOP_DIR)/ros2-desktop
+
+# Directory of ROS 2 source code
+ROS2_PROJECT_DIR = $(TOP_DIR)/ros2-ws
