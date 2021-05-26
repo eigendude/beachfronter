@@ -180,6 +180,8 @@ $(S)/download-ros2: $(S)/download-base $(S)/install-pip
 #
 # Download local dependencies
 #
+# TODO: sudo apt install ros-foxy-v4l2-camera
+#
 $(S)/download-depends: $(S)/download-base $(S)/install-pip
 	echo "Downloading local dependencies..."
 
