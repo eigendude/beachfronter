@@ -127,7 +127,7 @@ $(S)/install-prereqs: $(S)/base
 
 	# Add the ROS 2 repository to our sources list
 	# NOTE: hersute packages not currently available
-	sudo sh -c 'echo "deb [arch=$(shell dpkg --print-architecture)] http://packages.ros.org/ros2/ubuntu $(shell lsb_release -cs) main" > /etc/apt/sources.list.d/ros2-latest.list'
+	sudo sh -c 'echo "deb [arch=$(shell dpkg --print-architecture)] http://packages.ros.org/ros2/ubuntu $(shell lsb_release -cs) main" > /etc/apt/sources.list.d/ros2.list'
 
 	sudo apt update
 
