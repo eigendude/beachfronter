@@ -237,8 +237,8 @@ $(S)/build-ros2: $(ROS2_BUILD_DEPS)
 
 	+cd "$(ROS2_DESKTOP_DIR)" && \
 	  PATH="$(CMAKE_DIR)/bin:$${PATH}" \
-	  `#MAKEFLAGS="-j1 -l1"` \
-	  colcon build `#--executor sequential`
+	  MAKEFLAGS="-j1 -l1" \
+	  colcon build --executor sequential
 
 	touch "$@"
 
@@ -311,7 +311,7 @@ $(S)/build-project-depends: $(S)/install-project-rosdeps
 	+source "$(ROS_SETUP)" && \
 	  cd "$(ROS2_PROJECT_DIR)" && \
 	  PATH="$(CMAKE_DIR)/bin:$${PATH}" \
-	  `#MAKEFLAGS="-j1 -l1"` \
-	  colcon build `#--executor sequential`
+	  MAKEFLAGS="-j1 -l1" \
+	  colcon build --executor sequential
 
 	touch "$@"
