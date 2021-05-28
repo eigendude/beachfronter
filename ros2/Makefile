@@ -12,6 +12,8 @@
 #
 # ROS 2 build chain
 #
+# A lot of RAM is required to build ROS. Consider adding a swapfile.
+#
 # If ROS 2 is installed to the system, source the setup script before calling
 # make. This is not needed if the ROS 2 desktop components are also being built.
 #
