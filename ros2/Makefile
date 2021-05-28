@@ -31,11 +31,11 @@
 #
 # Install development tools and ROS tools:
 #
-#   sudo apt install build-essential cmake git gfortran libbullet-dev python3-flake8 python3-pip python3-pytest-cov python3-rosdep python3-setuptools python3-vcstool
+#   sudo apt install build-essential cmake git gfortran libbullet-dev python3-colcon-common-extensions python3-flake8 python3-pip python3-pytest-cov python3-rosdep python3-setuptools python3-vcstool wget
 #
 # Install some pip packages needed for testing:
 #
-#   python3 -m pip install -U argcomplete colcon-ros flake8-blind-except flake8-builtins flake8-class-newline flake8-comprehensions flake8-deprecated flake8-docstrings flake8-import-order flake8-quotes pytest-repeat pytest-rerunfailures pytest
+#   python3 -m pip install -U argcomplete flake8-blind-except flake8-builtins flake8-class-newline flake8-comprehensions flake8-deprecated flake8-docstrings flake8-import-order flake8-quotes pytest-repeat pytest-rerunfailures pytest
 #
 # Install Fast-RTPS dependencies:
 #
@@ -132,16 +132,16 @@ $(S)/install-prereqs: $(S)/base
 	sudo apt update
 
 	# Install development tools and ROS tools
-	sudo apt install -y build-essential cmake git gfortran libbullet-dev python3-flake8 python3-pip python3-pytest-cov python3-rosdep python3-setuptools python3-vcstool wget
+	sudo apt install -y build-essential cmake git gfortran libbullet-dev python3-colcon-common-extensions python3-flake8 python3-pip python3-pytest-cov python3-rosdep python3-setuptools python3-vcstool wget
 
 	touch "$@"
 
-#v
+#
 # Install pip packages
 #
 $(S)/install-pip: $(S)/install-prereqs
 	# Install some pip packages needed for testing
-	python3 -m pip install -U argcomplete colcon-ros flake8-blind-except flake8-builtins flake8-class-newline flake8-comprehensions flake8-deprecated flake8-docstrings flake8-import-order flake8-quotes pytest-repeat pytest-rerunfailures pytest
+	python3 -m pip install -U argcomplete flake8-blind-except flake8-builtins flake8-class-newline flake8-comprehensions flake8-deprecated flake8-docstrings flake8-import-order flake8-quotes pytest-repeat pytest-rerunfailures pytest
 
 	touch "$@"
 
